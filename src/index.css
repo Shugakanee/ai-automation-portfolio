@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-200 antialiased;
+  }
+
+  .dark body {
+    @apply bg-navy-950 text-slate-100;
+  }
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334e68;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  @apply bg-white/80 dark:bg-navy-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80;
+}
+
+.glass-card {
+  @apply bg-white dark:bg-navy-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all duration-300;
+}
+
+/* Glowing accent effects */
+.glow-blue {
+  box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.25);
+}
+
+.glow-violet {
+  box-shadow: 0 0 25px -5px rgba(124, 58, 237, 0.25);
+}
+
+/* Workflow node connector line animation */
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.flow-active {
+  stroke-dasharray: 6 4;
+  animation: flowDash 1s linear infinite;
+}
+
+/* ElevenLabs Conversational AI Widget Positioning & Accessibility */
+elevenlabs-convai {
+  position: relative;
+  z-index: 50;
+}
+

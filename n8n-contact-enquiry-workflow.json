@@ -1,0 +1,129 @@
+{
+  "name": "Portfolio Contact Enquiry & Email Alert Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "portfolio-contact",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "node-webhook-1",
+      "name": "Webhook: Receive Portfolio Enquiry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "portfolio-contact"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.full_name }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.body.email }}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{ $json.body.service_needed }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "node-filter-1",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "notifications@yourdomain.com",
+        "toEmail": "chimezieachionye@gmail.com",
+        "subject": "=🔥 New Project Enquiry: {{ $json.body.service_needed }} from {{ $json.body.full_name }}",
+        "html": "=<h2>New AI Automation Project Enquiry</h2><p><strong>Full Name:</strong> {{ $json.body.full_name }}</p><p><strong>Email:</strong> <a href=\"mailto:{{ $json.body.email }}\">{{ $json.body.email }}</a></p><p><strong>Phone:</strong> {{ $json.body.phone }}</p><p><strong>Company:</strong> {{ $json.body.company_name }}</p><p><strong>Service Requested:</strong> {{ $json.body.service_needed }}</p><p><strong>Budget Range:</strong> {{ $json.body.budget_range }}</p><p><strong>Project Details:</strong></p><blockquote>{{ $json.body.project_details }}</blockquote><p><small>Submitted at: {{ $json.body.submitted_at }} via Portfolio Website</small></p>"
+      },
+      "id": "node-email-1",
+      "name": "Send Email to Precious",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Enquiry successfully received by n8n automation pipeline\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "node-respond-success",
+      "name": "Respond Success (200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [940, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"message\": \"Missing required fields in enquiry payload\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "node-respond-error",
+      "name": "Respond Invalid Payload (400)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [700, 420]
+    }
+  ],
+  "connections": {
+    "Webhook: Receive Portfolio Enquiry": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Fields": {
+      "main": [
+        [
+          {
+            "node": "Send Email to Precious",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Payload (400)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email to Precious": {
+      "main": [
+        [
+          {
+            "node": "Respond Success (200)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
